@@ -9,6 +9,8 @@ import './DetailsPanel.styl';
 import { RegionDetailsMain, RegionDetailsMeta } from './RegionDetails';
 import { RegionItem } from './RegionItem';
 import { Relations as RelationsComponent } from './Relations';
+import Graph from './Graphs'
+
 // eslint-disable-next-line
 // @ts-ignore
 import { DraftPanel } from '../../DraftPanel/DraftPanel';
@@ -114,13 +116,17 @@ const HistoryTab: FC<any> = inject('store')(observer(({ store, currentEntity }) 
 
 
 const InfoTab: FC<any> = inject('store')(
-  observer(({ selection }) => {
+  observer(({ store, selection }) => {
+    console.log(selection);
     return (
       <>
         <Block name="info">
           <Elem name="section-tab">
-            <Elem name="section-head">Selection Details</Elem>
+            <Elem name="section-head">
+              Selection Details
+            </Elem>
             <RegionsPanel regions={selection}/>
+            <Graph store={store} regions={selection}/>
           </Elem>
         </Block>
       </>
@@ -169,7 +175,7 @@ const GeneralPanel: FC<any> = inject('store')(observer(({ store, currentEntity }
           </Elem>
           <Elem name="section-content">
             <CommentsComponent
-              annotationStore={store.annotationStore} 
+              annotationStore={store.annotationStore}
               commentStore={store.commentStore}
               cacheKey={`task.${store.task.id}`}
             />

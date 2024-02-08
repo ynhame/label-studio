@@ -1,20 +1,20 @@
 import { FC, MutableRefObject, ReactNode } from 'react';
 import { clamp } from '../../../utils/utilities';
 import { DEFAULT_PANEL_HEIGHT, DEFAULT_PANEL_MAX_HEIGHT, DEFAULT_PANEL_MAX_WIDTH, DEFAULT_PANEL_MIN_HEIGHT, DEFAULT_PANEL_WIDTH, PANEL_HEADER_HEIGHT } from '../constants';
-import { Comments, History, Info, Relations } from '../DetailsPanel/DetailsPanel';
+import { Comments, History, Info, Relations} from '../DetailsPanel/DetailsPanel';
 import { OutlinerComponent } from '../OutlinerPanel/OutlinerPanel';
 import { PanelProps } from '../PanelBase';
 import { emptyPanel, JoinOrder, PanelBBox, PanelsCollapsed, PanelView, Side, StoredPanelState, ViewportSize } from './types';
 
 export const determineLeftOrRight = (event: any, droppableElement?: ReactNode) => {
-  const element = droppableElement || event.target as HTMLElement;  
+  const element = droppableElement || event.target as HTMLElement;
   const dropWidth = (element as HTMLElement).clientWidth as number;
   const x = event.pageX as number - (element as HTMLElement).getBoundingClientRect().left;
   const half = dropWidth / 2;
-    
+
   return x > half ? Side.right : Side.left;
 };
-  
+
 export const determineDroppableArea = (droppingElement: HTMLElement) => droppingElement?.id?.includes('droppable');
 
 export const stateRemovedTab = (state: Record<string, PanelBBox>, movingPanel: string, movingTab: number) => {
@@ -80,15 +80,15 @@ export const stateAddedTab = (
 ) => {
   const newState = { ...state };
   const panel = newState[receivingPanel];
-  
+
   panel.panelViews = newState[receivingPanel].panelViews.map((view) => {
     view.active = false;
     return view;
   });
-  
+
   let index = receivingTab + (dropSide === Side.right ? 1 : 0);
 
-  if (movingPanel === receivingPanel && index > 0) index -= 1; 
+  if (movingPanel === receivingPanel && index > 0) index -= 1;
   panel.panelViews.splice(index, 0, movingTabData);
   return newState;
 };
@@ -142,6 +142,12 @@ const panelViews = [
     component: panelComponents['comments'] as FC<PanelProps>,
     active: false,
   },
+  {
+    name: 'graphs',
+    title: 'graphs',
+    component: panelComponents['graphs'] as FC<PanelProps>,
+    active: false,
+  },
 ];
 
 export const enterprisePanelDefault: Record<string, PanelBBox> = {
@@ -178,7 +184,7 @@ export const enterprisePanelDefault: Record<string, PanelBBox> = {
 };
 
 export const openSourcePanelDefault: Record<string, PanelBBox> = {
-  'info-history': {
+  'info-relations': {
     order: 1,
     top: 0,
     left: 0,
@@ -191,9 +197,9 @@ export const openSourcePanelDefault: Record<string, PanelBBox> = {
     detached: false,
     alignment: Side.right,
     maxHeight: DEFAULT_PANEL_MAX_HEIGHT,
-    panelViews: [panelViews[3], panelViews[1]],
+    panelViews: [panelViews[3], panelViews[2]],
   },
-  'regions-relations': {
+  'regions-history': {
     order: 2,
     top: 0,
     left: 0,
@@ -206,7 +212,7 @@ export const openSourcePanelDefault: Record<string, PanelBBox> = {
     detached: false,
     alignment: Side.right,
     maxHeight: DEFAULT_PANEL_MAX_HEIGHT,
-    panelViews: [panelViews[0], panelViews[2]],
+    panelViews: [panelViews[0], panelViews[1]],
   },
 };
 
@@ -297,7 +303,7 @@ export const restoreComponentsToState = (panelData: Record<string, PanelBBox>) =
     });
   });
 
-  return updatedPanels; 
+  return updatedPanels;
 };
 
 export const savePanels = (panelData: Record<string, PanelBBox>, collapsedSide: { [Side.left]: boolean, [Side.right]: boolean }) => {
@@ -329,7 +335,7 @@ export const getSnappedHeights = (
     const negativeNumber = visibleGroupDifference < 0;
     const adjustment = Math.abs(visibleGroupDifference) / (visible.length || 1);
     let top = 0;
-    
+
     visible.forEach(panelKey => {
       const newHeight = negativeNumber
         ? newState[panelKey].height - adjustment
@@ -403,7 +409,7 @@ export const joinPanelColumns = (
     if (acc < state[key].width) return state[key].width;
     return acc;
   }, 0) || width;
-  
+
   const addedPanel = {
     ...newState, [panelAddKey]: {
       ...newState[panelAddKey],
@@ -453,7 +459,7 @@ export const resizePanelColumns = (
   const difference = (height - newState[key].height);
   const visiblePanels = panelsOnSameAlignment.filter((panelKey) => newState[panelKey].visible);
   const panelAboveKeyIndex = visiblePanels?.findIndex((visibleKey) => visibleKey === key) - 1;
-  
+
   if (panelAboveKeyIndex === undefined) return state;
 
   const panelAboveKey = visiblePanels[panelAboveKeyIndex];
@@ -480,7 +486,7 @@ export const resizePanelColumns = (
   const totalHeight = panelsOnSameAlignment
     .filter(panelKey => newState[panelKey].visible)
     .reduce((acc, panelKey) => acc + newState[panelKey].height, 0);
-  
+
   if (totalHeight + collapsedAdjustments > availableHeight) return getSnappedHeights(state, availableHeight);
   return getSnappedHeights(newState, availableHeight);
 };
