@@ -89,6 +89,7 @@ def health(request):
 
 def metrics(request):
     """Empty page for metrics evaluation"""
+    print(f'{request.POST=}\n{request.GET=}')
     return HttpResponse('')
 
 
@@ -166,6 +167,23 @@ def samples_paragraphs(request):
 
     return HttpResponse(json.dumps(result), content_type='application/json')
 
+
+def plotting(request):
+    """Generate paragraphs example for preview"""
+    print(request)
+    return json.dumps({"oi": 2345678} )
+
+    # if _PARAGRAPH_SAMPLE is None:
+    #     with open(find_file('paragraphs.json'), encoding='utf-8') as f:
+    #         _PARAGRAPH_SAMPLE = json.load(f)
+    # name_key = request.GET.get('nameKey', 'author')
+    # text_key = request.GET.get('textKey', 'text')
+    #
+    # result = []
+    # for line in _PARAGRAPH_SAMPLE:
+    #     result.append({name_key: line['author'], text_key: line['text']})
+    #
+    # return HttpResponse(json.dumps(result), content_type='application/json')
 
 def localfiles_data(request):
     """Serving files for LocalFilesImportStorage"""
