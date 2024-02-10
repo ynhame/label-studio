@@ -89,8 +89,11 @@ def health(request):
 
 def metrics(request):
     """Empty page for metrics evaluation"""
-    print(f'{request.POST=}\n{request.GET=}')
-    return HttpResponse('')
+    if request.method == "GET":
+        print(f'{request.POST=}\n{request.GET=}')
+    elif request.method == "POST":
+        print(f'{request.body=}')
+    return JsonResponse({"data": "lalala"})
 
 
 class TriggerAPIError(APIView):
