@@ -10,7 +10,8 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "typeRoots": ["src/types", "../../node_modules/@types"],
-    "types": []
+    "types": [],
+    "experimentalDecorators": false /* or just remove the flag */
   },
   "files": [],
   "include": ["src/types", "node_modules/@types"],

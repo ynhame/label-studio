@@ -117,7 +117,7 @@ const HistoryTab: FC<any> = inject('store')(observer(({ store, currentEntity }) 
 
 const InfoTab: FC<any> = inject('store')(
   observer(({ store, selection }) => {
-    console.log(selection);
+
     return (
       <>
         <Block name="info">
@@ -126,7 +126,15 @@ const InfoTab: FC<any> = inject('store')(
               Selection Details
             </Elem>
             <RegionsPanel regions={selection}/>
-            <Graph store={store} regions={selection}/>
+            <Graph raw_points={store
+                                .annotationStore
+                                .selected
+                                .regionStore
+                                .selection
+                                .list.map(
+                                  (e: any) => ( e.annotation.serializedSelection )
+                                )
+            }/>
           </Elem>
         </Block>
       </>
