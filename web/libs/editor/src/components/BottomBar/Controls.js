@@ -198,6 +198,7 @@ export const Controls = controlsInjector(observer(({ store, history, annotation 
                 look={look}
                 mod={{ has_icon: useExitOption, disabled: isDisabled }}
                 onClick={async (event) => {
+                  console.log("testando o butao de submit")
                   if (event.target.classList.contains('lsf-dropdown__trigger')) return;  
                   const selected = store.annotationStore?.selected;
 

@@ -204,37 +204,39 @@ const plotStore = types.model({
        label: e.value.polygonlabels[0]
       }))
     }
-    const fetchProjects = flow(function* (rawPoints) {
+    const fetchProjects = flow(function* (rawPoints, imagePath, taskId) {
      console.log('entrei na função que faz o fetch')
 
-      const url = 'metrics'
+      const url = 'plotting'
 
       const raw_id = rawPoints.flatMap(e => e.id)
       const raw_labels = rawPoints.flatMap(e => e.value.polygonlabels[0])
       const raw_points = rawPoints.flatMap(e => e.value.points)
       if ( arrIdentical(raw_id, plotstore.rawPoints.map(e => e.id))) {
-        console.log("as ids são as mesmas")
+        console.log("the ids are the same")
         return
       }
       if (arrIdentical(raw_labels, plotstore.rawPoints.map(e => e.label))){
-        console.log("as lables são as mesmas")
+        console.log("the labels are the same")
         return
       } 
       if (arrIdentical(raw_points, plotstore.rawPoints.map(e => e.points))) {
-        console.log("0s pontos são os mesmos")
+        console.log("the points are the same")
         return
       } 
 
       updateRawPoints(rawPoints)
 
       try {
-        self.plots = yield fetch(url, {
-          headers : {
-            'Content-Type' : 'application/json'
-          },
-          method: 'POST',
-          body: JSON.stringify(self.rawPoints)
-        })
+        self.plots = yield fetch(url,
+          {
+            headers : {
+              'Content-Type' : 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify( {rawpoints: self.rawPoints, imagePath: imagePath, taskId:taskId} )
+          }
+        )
         .then(response => response.json())
         .then(obj => {
           return obj.response.map(e => adapter(e))
@@ -260,14 +262,11 @@ const plotstore = plotStore.create({
     rawPoints : []
 })
 
-const Graph: React.FC<any> = observer(({raw_points}) => {
-    console.log('entrei no gráfico')
+const Graph: React.FC<any> = observer(({rawPoints, imagePath, taskId}) => {
 
 
-    console.log("raw points:")
-    console.log(raw_points[0])
-  if (raw_points[0] !== undefined){
-    plotstore.fetchProjects(raw_points[0])
+  if (rawPoints[0] !== undefined){
+    plotstore.fetchProjects(rawPoints[0], imagePath, taskId)
   } else {
     console.log("nenhuma região selecionada")
   }

@@ -1,5 +1,5 @@
-"""This file and its contents are licensed under the Apache License 2.0. Please see the included NOTICE for copyright information and LICENSE for a copy of the license.
-"""
+"""This file and its contents are licensed under the Apache License 2.0. Please see the included NOTICE for copyright information and LICENSE for a copy of the license."""
+
 import io
 import json
 import logging
@@ -86,78 +86,19 @@ def health(request):
     return HttpResponse(json.dumps({"status": "UP"}))
 
 
-def metrics(request):
-    """Empty page for metrics evaluation"""
-    from random import randrange as rng
-
-    dates_and_values = [
-        ["2019-01-01", 87],
-        ["2019-02-01", 97],
-        ["2019-03-04", 81],
-        ["2019-04-04", 67],
-        ["2019-05-05", 15],
-        ["2019-06-05", 69],
-        ["2019-07-06", 49],
-        ["2019-08-06", 58],
-        ["2019-09-06", 49],
-        ["2019-10-07", 94],
-        ["2019-11-07", 25],
-        ["2019-12-08", 56],
-        ["2020-01-08", 9],
-        ["2020-02-08", 86],
-        ["2020-04-10", 13],
-        ["2020-05-11", 60],
-        ["2020-06-11", 6],
-        ["2020-07-12", 27],
-        ["2020-08-12", 16],
-        ["2020-09-12", 66],
-        ["2020-11-13", 55],
-        ["2020-12-14", 62],
-        ["2021-01-14", 51],
-        ["2021-02-14", 6],
-        ["2021-03-17", 37],
-        ["2021-04-17", 13],
-        ["2021-06-18", 84],
-        ["2021-07-19", 4],
-        ["2021-08-19", 31],
-        ["2021-09-19", 35],
-        ["2021-10-20", 13],
-        ["2021-11-20", 99],
-        ["2021-12-21", 32],
-        ["2022-01-21", 90],
-        ["2022-02-21", 84],
-        ["2022-03-24", 60],
-        ["2022-04-24", 23],
-        ["2022-05-25", 76],
-        ["2022-06-25", 25],
-        ["2022-07-26", 88],
-        ["2022-08-26", 12],
-        ["2022-09-26", 13],
-        ["2022-10-27", 55],
-        ["2022-11-27", 59],
-        ["2022-12-28", 99],
-    ]
-    values = [
-        (
-            value[0],  # date
-            value[1] + rng(-20, -10),  # Q1
-            value[1] + rng(-5, 5),  # median
-            value[1],  # mean
-            value[1] + rng(10, 20),  # Q3
-        )
-        for value in dates_and_values
-    ]
-    response = {"response": [{"name": "NDVI", "values": values}]}
-
-    if request.method == "GET":
-        print(f"{request.POST=}\n{request.GET=}")
-        print(response)
-        return JsonResponse(response)
-    elif request.method == "POST":
+def poligonos_car(request):
+    if request.method == "POST":
         print(f"{request.headers=}")
         print(f"{request.body=}")
-        print(response)
-        return JsonResponse(response)
+    car_regions = [
+        [23, 20, 23, 160, 70, 93, 150, 109, 290, 139, 270, 93],
+        [160, 70, 93, 150, 109, 290, 139, 270, 93, 23],
+    ]
+    return JsonResponse({"car_regions": car_regions})
+
+
+def metrics(request):
+    """Empty page for metrics evaluation"""
     return JsonResponse(response)
 
 
@@ -238,8 +179,77 @@ def samples_paragraphs(request):
 
 def plotting(request):
     """Generate paragraphs example for preview"""
-    print(request)
-    return json.dumps({"oi": 2345678})
+    from random import randrange as rng
+
+    dates_and_values = [
+        ["2019-01-01", 87],
+        ["2019-02-01", 97],
+        ["2019-03-04", 81],
+        ["2019-04-04", 67],
+        ["2019-05-05", 15],
+        ["2019-06-05", 69],
+        ["2019-07-06", 49],
+        ["2019-08-06", 58],
+        ["2019-09-06", 49],
+        ["2019-10-07", 94],
+        ["2019-11-07", 25],
+        ["2019-12-08", 56],
+        ["2020-01-08", 9],
+        ["2020-02-08", 86],
+        ["2020-04-10", 13],
+        ["2020-05-11", 60],
+        ["2020-06-11", 6],
+        ["2020-07-12", 27],
+        ["2020-08-12", 16],
+        ["2020-09-12", 66],
+        ["2020-11-13", 55],
+        ["2020-12-14", 62],
+        ["2021-01-14", 51],
+        ["2021-02-14", 6],
+        ["2021-03-17", 37],
+        ["2021-04-17", 13],
+        ["2021-06-18", 84],
+        ["2021-07-19", 4],
+        ["2021-08-19", 31],
+        ["2021-09-19", 35],
+        ["2021-10-20", 13],
+        ["2021-11-20", 99],
+        ["2021-12-21", 32],
+        ["2022-01-21", 90],
+        ["2022-02-21", 84],
+        ["2022-03-24", 60],
+        ["2022-04-24", 23],
+        ["2022-05-25", 76],
+        ["2022-06-25", 25],
+        ["2022-07-26", 88],
+        ["2022-08-26", 12],
+        ["2022-09-26", 13],
+        ["2022-10-27", 55],
+        ["2022-11-27", 59],
+        ["2022-12-28", 99],
+    ]
+    values = [
+        (
+            value[0],  # date
+            value[1] + rng(-20, -10),  # Q1
+            value[1] + rng(-5, 5),  # median
+            value[1],  # mean
+            value[1] + rng(10, 20),  # Q3
+        )
+        for value in dates_and_values
+    ]
+    response = {"response": [{"name": "NDVI", "values": values}]}
+
+    if request.method == "GET":
+        print(f"{request.POST=}\n{request.GET=}")
+        print(response)
+        return JsonResponse(response)
+    elif request.method == "POST":
+        print(f"{request.headers=}")
+        print(f"{request.body=}")
+        print(response)
+        return JsonResponse(response)
+    return JsonResponse(response)
 
     # if _PARAGRAPH_SAMPLE is None:
     #     with open(find_file('paragraphs.json'), encoding='utf-8') as f:

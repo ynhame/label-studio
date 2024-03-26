@@ -10,6 +10,7 @@ import { RegionDetailsMain, RegionDetailsMeta } from './RegionDetails';
 import { RegionItem } from './RegionItem';
 import { Relations as RelationsComponent } from './Relations';
 import Graph from './Graphs'
+import Toggle from '../../../common/Toggle/Toggle';
 
 // eslint-disable-next-line
 // @ts-ignore
@@ -118,6 +119,17 @@ const HistoryTab: FC<any> = inject('store')(observer(({ store, currentEntity }) 
 const InfoTab: FC<any> = inject('store')(
   observer(({ store, selection }) => {
 
+    function togle(){
+      store.toggleCarPolygons()
+      console.log("achar as dimensoes imagem")
+      console.log(store.task)
+      console.log("path da image")
+      console.log(store.task.dataObj.image)
+      console.log("id da task")
+      console.log(store.task.id)
+      // console.log('to rodando')
+    }
+
     return (
       <>
         <Block name="info">
@@ -125,16 +137,28 @@ const InfoTab: FC<any> = inject('store')(
             <Elem name="section-head">
               Selection Details
             </Elem>
+            <Toggle
+                className={'PolyCar'}
+                label={'poligonos do CAR'}
+                description={'habilitar ou desabilitar a visualização dos poligonos do CAR'}
+                checked={false}
+                defaultChecked={false}
+                onChange={togle}
+            />
             <RegionsPanel regions={selection}/>
-            <Graph raw_points={store
-                                .annotationStore
-                                .selected
-                                .regionStore
-                                .selection
-                                .list.map(
-                                  (e: any) => ( e.annotation.serializedSelection )
-                                )
-            }/>
+            <Graph
+              rawPoints={store
+                .annotationStore
+                .selected
+                .regionStore
+                .selection
+                .list.map(
+                  (e: any) => ( e.annotation.serializedSelection )
+                )
+              }
+              imagePath={store.task.dataObj.image}
+              taskId={store.task.id}
+              />
           </Elem>
         </Block>
       </>

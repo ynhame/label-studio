@@ -110,6 +110,22 @@ const Regions = memo(({ regions, useLayers = true, chunkSize = 15, suggestion = 
   );
 });
 
+const Car_Regions = memo(({ car_regions }) => {
+  // https://konvajs.org/docs/react/Shapes.html#sidebar
+  const lines = car_regions.map((region) => (
+      <Line
+        x={0} y={0} // offset
+        points={region} // coords of the polygon
+        // fill={'orange'} // fill color
+        opacity={1} // opacity of the color and the stroke
+        stroke={'#cc8110'}
+        strokeWidth={4}
+        closed
+      />
+  ));
+  return <Layer>{lines}</Layer>
+});
+
 const DrawingRegion = observer(({ item }) => {
   const { drawingRegion } = item;
 
@@ -1238,6 +1254,41 @@ const StageContent = observer(({
     suggestedShape: suggestedShapeRegions,
   });
 
+  const [drawCarPolygons, setDrawCarPolygons]  = useState(false)
+  const [carPolygons, setCarPolygons]  = useState(null)
+
+  const url = 'poligonos_car'
+
+  store.toggleCarPolygons = () => setDrawCarPolygons(!drawCarPolygons)
+
+  useEffect(() => {
+
+  // DO NOT REMOVE THE LINE BELLOW
+  // here I am forcing an access to the variable carPolygon 
+  // withc is necessary for the value to be updated before
+  // it reachs the if statement
+   carPolygons == null 
+
+   if (carPolygons == null && drawCarPolygons) {
+     try {
+       fetch(url,
+         {
+           headers: { 'Content-Type' : 'application/json' },
+           method: 'POST',
+           body: JSON.stringify({imagePath: store.task.dataObj.image, taskId: store.task.id})
+         }
+       )
+       .then((response) => response.json())
+       .then((obj) => {
+         setCarPolygons(obj.car_regions)
+       })
+     } catch (error) { 
+         console.error("Failed to fetch projects", error)
+     }
+  }
+  }, [carPolygons, drawCarPolygons, store.task.dataObj.image, store.task.id])
+
+
   return (
     <>
       {/* Hack to keep stage in place when there's no regions */}
@@ -1254,6 +1305,11 @@ const StageContent = observer(({
           : null
       }
 
+      {
+      carPolygons && drawCarPolygons
+        ? <Car_Regions car_regions={carPolygons} />
+        : <></>
+      }
       {renderableRegions.map(([groupName, list]) => {
         const isBrush = groupName.match(/brush/i) !== null;
         const isSuggestion = groupName.match('suggested') !== null;
