@@ -1,14 +1,21 @@
 import { inject, observer } from 'mobx-react';
+import { render } from 'react-dom';
 import { Button } from '../../common/Button/Button';
 import { Tooltip } from '../../common/Tooltip/Tooltip';
-import { Block, Elem } from '../../utils/bem';
+import { Block, Elem, cn } from '../../utils/bem';
 import { isDefined } from '../../utils/utilities';
 import { IconBan } from '../../assets/icons';
 import { FF_PROD_E_111, isFF } from '../../utils/feature-flags';
 import './Controls.styl';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useRef, useMemo, useState, useEffect, createRef } from 'react';
 import { LsChevron } from '../../assets/icons';
 import { Dropdown } from '../../common/Dropdown/DropdownComponent';
+// import { Modal, Select} from 'antd';
+import {Select} from 'antd';
+// import {modal} from '../../common/Modal/Modal'
+// import "antd/dist/antd.css";
+import {Stage, Layer, Rect, Line, Image} from 'react-konva';
+import useImage from 'use-image';
 
 const TOOLTIP_DELAY = 0.8;
 
@@ -23,6 +30,85 @@ const ButtonTooltip = inject('store')(observer(({ store, title, children }) => {
     </Tooltip>
   );
 }));
+
+
+const Modal = ({
+  isModalOpen,
+  setModalOpen,
+  onClose,
+  image,
+  polyCoords,
+  canvasSize
+}) => {
+  const modalRef = useRef(null);
+
+  const MODALSIZE = 1000
+
+  useEffect(() => {
+    const modalElement = modalRef.current;
+    if (modalElement) {
+      if (isModalOpen) {
+        modalElement.showModal();
+      } else {
+        modalElement.close();
+      }
+    }
+  }, [isModalOpen]);
+
+  const handleCloseModal = () => {
+    if (onClose) {
+      onClose();
+    }
+    setModalOpen(false);
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Escape") {
+      console.log("ESC was pressed")
+      console.log("polyCoords:")
+      console.log(polyCoords)
+      console.log("canvasSize:")
+      console.log(canvasSize)
+      handleCloseModal();
+    }
+  };
+  
+  return (
+    <dialog ref={modalRef} onKeyDown={handleKeyDown}>
+      <div width={MODALSIZE} height={MODALSIZE} style={{
+        display: "grid",
+        gridTempalteRows: "40px 500px 40px"
+      }}>
+        <h1>
+          Classifique as colheitas
+        </h1>
+        <div width={MODALSIZE} height={MODALSIZE} style={{
+          display: "grid",
+          gridTempalteColumns: "500px 500px",
+          columnGap: "1em"
+        }}>
+        <div style={{ gridColumnStart: 1,  gridColumnEnd: 1}}>
+          {image ? <img src={image} alt={"imagem"} width={500}/> : <h1>oi</h1>}
+        </div>
+        <div style={{ gridColumnStart: 2,  gridColumnEnd: 2}}>
+          {image ? <img src={image} alt={"imagem"} width={500}/> : <h1>oi</h1>}
+        </div>
+      
+        </div>
+        <div style={{display:"flex", justifyContent:"space-between"}}>
+          <Button className="modal-close-btn" onClick={handleCloseModal}>
+            Cancel
+          </Button>
+          <Button className="modal-close-btn" onClick={handleCloseModal}>
+            Finish
+          </Button>
+        </div>
+      </div>
+    </dialog>
+  );
+};
+
+
 
 const controlsInjector = inject(({ store }) => {
   return {
@@ -42,10 +128,10 @@ export const Controls = controlsInjector(observer(({ store, history, annotation 
 
   const disabled = !annotationEditable || store.isSubmitting || historySelected || isInProgress;
   const submitDisabled = store.hasInterface('annotations:deny-empty') && results.length === 0;
-  
+
   const buttonHandler = useCallback(async (e, callback, tooltipMessage) => {
     const { addedCommentThisSession, currentComment, commentFormSubmit } = store.commentStore;
-    
+
     if (isInProgress) return;
     setIsInProgress(true);
 
@@ -64,10 +150,10 @@ export const Controls = controlsInjector(observer(({ store, history, annotation 
     }
     setIsInProgress(false);
   }, [
-    store.rejectAnnotation, 
-    store.skipTask, 
-    store.commentStore.currentComment, 
-    store.commentStore.commentFormSubmit, 
+    store.rejectAnnotation,
+    store.skipTask,
+    store.commentStore.currentComment,
+    store.commentStore.commentFormSubmit,
     store.commentStore.addedCommentThisSession,
     isInProgress,
   ]);
@@ -160,7 +246,7 @@ export const Controls = controlsInjector(observer(({ store, history, annotation 
             look="secondary"
             onClick={async (event) => {
               event.preventDefault();
-              
+
               const selected = store.annotationStore?.selected;
 
               selected?.submissionInProgress();
@@ -199,7 +285,7 @@ export const Controls = controlsInjector(observer(({ store, history, annotation 
                 mod={{ has_icon: useExitOption, disabled: isDisabled }}
                 onClick={async (event) => {
                   console.log("testando o butao de submit")
-                  if (event.target.classList.contains('lsf-dropdown__trigger')) return;  
+                  if (event.target.classList.contains('lsf-dropdown__trigger')) return;
                   const selected = store.annotationStore?.selected;
 
                   selected?.submissionInProgress();
@@ -244,7 +330,7 @@ export const Controls = controlsInjector(observer(({ store, history, annotation 
               }}
               icon={useExitOption && (
                 <Dropdown.Trigger
-                  alignment="top-right" 
+                  alignment="top-right"
                   content={<SubmitOption onClickMethod={store.updateAnnotation} isUpdate={isUpdate} />}
                 >
                   <div>
@@ -259,13 +345,13 @@ export const Controls = controlsInjector(observer(({ store, history, annotation 
         );
 
         buttons.push(button);
-      }  
+      }
     } else {
       if ((userGenerate) || (store.explore && !userGenerate && store.hasInterface('submit'))) {
         const title = submitDisabled
           ? 'Empty annotations denied in this project'
           : 'Save results: [ Ctrl+Enter ]';
-  
+
         buttons.push(
           <ButtonTooltip key="submit" title={title}>
             <Elem name="tooltip-wrapper">
@@ -282,7 +368,7 @@ export const Controls = controlsInjector(observer(({ store, history, annotation 
           </ButtonTooltip>,
         );
       }
-  
+
       if ((userGenerate && sentUserGenerate) || (!userGenerate && store.hasInterface('update'))) {
         const isUpdate = sentUserGenerate || versions.result;
         const button = (
@@ -298,15 +384,92 @@ export const Controls = controlsInjector(observer(({ store, history, annotation 
             </Button>
           </ButtonTooltip>
         );
-  
+
         buttons.push(button);
-      }  
+      }
+
+    // store.updateAnnotation = false
+
     }
   }
+      buttons.push(
+        <ButtonTooltip key="submit" title={'Classificar'}>
+          <Elem name="tooltip-wrapper">
+            <Button aria-label="classificar" disabled={false} look={'primary'} onClick={async () => {
+
+              const selected = store.annotationStore?.selected;
+              showFinalClassificationModal(store)
+
+              // selected?.submissionInProgress();
+              // await store.commentStore.commentFormSubmit();
+              // store.submitAnnotation();
+            }}>
+              lalala
+            </Button>
+          </Elem>
+        </ButtonTooltip>
+      );
+
+const [isModalOpen, setModalOpen] = useState(false);
+const [imgSrc, setImgSrc] = useState(null);
+const [canvasSize, setCanvasSize] = useState(null);
+const [polyCoords, setPolyCoords] = useState(null);
+
+const showFinalClassificationModal = useCallback((store) => {
+  // store.updateAnnotation = true
+  console.log("testando o show modal")
+  const canvasSize = store
+    .annotationStore
+    .selected
+    .objects[0]
+    .canvasSize
+  console.log(canvasSize)
+  const polyCoords = store
+    .annotationStore
+    .annotations
+    .filter(e => e.selected)[0]
+    .regions.map(f => {
+          return {
+            points: f.points.map(g => {
+              return {
+                x: g.x,
+                y: g.y,
+                canvasX: g.canvasX,
+                canvasY: g.canvasY,
+                relX: g.relativeX,
+                relY: g.relativeY,
+            }}),
+            canvasSize: canvasSize
+    }})
+
+  console.log("entrei no segmentador")
+
+  console.log("store.task:")
+  console.log(store.task)
+  console.log("polycoords")
+  console.log(polyCoords)
+
+  setCanvasSize(canvasSize)
+  setPolyCoords(polyCoords)
+  setImgSrc(store.task.dataObj.image)
+  setModalOpen(true)
+});
+
+  // const isModalOpen = (state) =>  {
+  //   store.updateAnnotation = state
+  // }
 
   return (
     <Block name="controls">
       {buttons}
+      <Modal
+        isModalOpen={isModalOpen}
+        setModalOpen={setModalOpen}
+        isOpen={true}
+        image={imgSrc}
+        polyCoords={polyCoords}
+        canvasSize={canvasSize}
+      />
     </Block>
   );
-}));
+}))
