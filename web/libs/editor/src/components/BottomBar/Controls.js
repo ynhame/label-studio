@@ -15,7 +15,13 @@ import {Select} from 'antd';
 // import {modal} from '../../common/Modal/Modal'
 // import "antd/dist/antd.css";
 import {Stage, Layer, Rect, Line, Image} from 'react-konva';
+import { MapContainer } from 'react-leaflet'
+import { ImageOverlay ,TileLayer} from 'react-leaflet'
+import { useMap } from 'react-leaflet/hooks'
+import {CRS} from 'leaflet'
 import useImage from 'use-image';
+import 'leaflet/dist/leaflet.css'
+// import "./MapStyle.styl"
 
 const TOOLTIP_DELAY = 0.8;
 
@@ -31,7 +37,7 @@ const ButtonTooltip = inject('store')(observer(({ store, title, children }) => {
   );
 }));
 
-
+// https://blog.logrocket.com/creating-reusable-pop-up-modal-reac/
 const Modal = ({
   isModalOpen,
   setModalOpen,
@@ -64,38 +70,141 @@ const Modal = ({
 
   const handleKeyDown = (event) => {
     if (event.key === "Escape") {
+      if (isModalOpen) {
+        // https://github.com/slightlyoff/history_api/issues/13
+        event.preventDefault()
+      }
       console.log("ESC was pressed")
       console.log("polyCoords:")
       console.log(polyCoords)
       console.log("canvasSize:")
       console.log(canvasSize)
-      handleCloseModal();
+      console.log("iamge:")
+      if (image) {
+        console.log(image)
+      }
+      // handleCloseModal();
     }
   };
+
   
+  const containerStyles = (size, metric, style) => {
+    let _size = null
+    switch (metric) {
+      case "px":
+          _size = `${size}px`;
+          break;
+      case "%":
+          _size = `${size}%`;
+          break;
+      default:
+          _size = size;
+          break;
+    }
+
+    const returnValue = {
+      height: _size,
+      width: _size,
+      maxHeight: _size,
+      maxWidth: _size,
+    }
+
+    return style ? {...returnValue, ...style} : returnValue
+    
+  }
+
   return (
-    <dialog ref={modalRef} onKeyDown={handleKeyDown}>
-      <div width={MODALSIZE} height={MODALSIZE} style={{
-        display: "grid",
-        gridTempalteRows: "40px 500px 40px"
-      }}>
-        <h1>
+    <dialog ref={modalRef} onKeyDown={handleKeyDown} style={{
+      height: 680,
+      width: 1010,
+      maxHeight: 680,
+      maxWidth: 1010,
+    }}>
+      <div  height={MODALSIZE} style={{
+      height: 680,
+      width: 1010,
+      maxHeight: 680,
+      maxWidth: 1010,
+      flexDirection: "column"
+    }}>
+        <h1 style={{ flex:1, textAlign:"center"}}>
           Classifique as colheitas
         </h1>
-        <div width={MODALSIZE} height={MODALSIZE} style={{
-          display: "grid",
-          gridTempalteColumns: "500px 500px",
-          columnGap: "1em"
-        }}>
-        <div style={{ gridColumnStart: 1,  gridColumnEnd: 1}}>
-          {image ? <img src={image} alt={"imagem"} width={500}/> : <h1>oi</h1>}
-        </div>
-        <div style={{ gridColumnStart: 2,  gridColumnEnd: 2}}>
-          {image ? <img src={image} alt={"imagem"} width={500}/> : <h1>oi</h1>}
-        </div>
-      
-        </div>
-        <div style={{display:"flex", justifyContent:"space-between"}}>
+
+        <div style={{flex:8, flexDirection:"row", gap: "10px"}}>
+        <svg
+          alt="oi"
+          xmlns="http://www.w3.org/2000/svg"
+          width="500"
+          height="500"
+          viewBox="0 0 500 500"
+        >
+          <foreignObject x={0} y={0} width={500} height={500}>
+              {
+                image ? 
+                    <MapContainer
+                      crs={CRS.Simple}
+                      center={[250,250]}
+                      maxBounds={[[0,0],[250,500]]}
+                      maxZoom={2}
+                      minZoom={0}
+                      maxBoundsViscosity={1.0}
+                      zoom={1}
+                      attributionControl={false}
+                      zoomControl={false}
+                      scrollWhellZomm={false}
+                      style={containerStyles(500, null, {backgroundColor:"black"})}
+                      dragging={true}
+                    >
+                      <ImageOverlay
+                        url={image}
+                        bounds={[[0,0],[500,500]]}
+                        maxBounds={[[0,0],[500,500]]}
+                      />
+                    </MapContainer>
+                  : <div style={{ flex: 1}}>
+                      {image ? <img src={image} alt={"imagem"} width={500}/> : <h1>oi</h1>}
+                    </div>
+              }
+          </foreignObject>
+        </svg>
+        <svg
+          alt="oi"
+          xmlns="http://www.w3.org/2000/svg"
+          width="500"
+          height="500"
+          viewBox="0 0 500 500"
+        >
+          <foreignObject x={0} y={0} width={500} height={500}>
+              {
+                image ? 
+                    <MapContainer
+                      crs={CRS.Simple}
+                      center={[750,250]}
+                      maxBounds={[[0,0],[500,500]]}
+                      maxZoom={1}
+                      minZoom={1}
+                      maxBoundsViscosity={1.0}
+                      zoom={1}
+                      attributionControl={false}
+                      zoomControl={false}
+                      scrollWhellZomm={false}
+                      style={containerStyles(500, null, {backgroundColor:"black"})}
+                      dragging={true}
+                    >
+                      <ImageOverlay
+                        url={image}
+                        bounds={[[250,250],[500,500]]}
+                      />
+                    </MapContainer>
+                  : <div style={{ flex: 1}}>
+                      {image ? <img src={image} alt={"imagem"} width={500}/> : <h1>oi</h1>}
+                    </div>
+              }
+          </foreignObject>
+        </svg>
+            </div>
+        <div style={{flex: 1, display:"flex", justifyContent:"space-between"}}>
           <Button className="modal-close-btn" onClick={handleCloseModal}>
             Cancel
           </Button>
