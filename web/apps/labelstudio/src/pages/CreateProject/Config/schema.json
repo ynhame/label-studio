@@ -374,6 +374,182 @@
       }
     }
   },
+  "SateliteImage": {
+    "name": "Image",
+    "description": "The `SateliteImage` tag shows an SateliteImage on the page. Use only for georef images annotation tasks to display an image on the labeling interface.\n\nUse with the following data types: images.\n\nWhen you annotate image regions with this tag, the annotations are saved as percentages of the original size of the image, from 0-100.",
+    "attrs": {
+      "name": {
+        "name": "name",
+        "description": "Name of the element",
+        "type": "string",
+        "required": true
+      },
+      "value": {
+        "name": "value",
+        "description": "Data field containing a path or URL to the image",
+        "type": "string",
+        "required": true
+      },
+      "smoothing": {
+        "name": "smoothing",
+        "description": "Enable smoothing, by default it uses user settings",
+        "type": [
+          "true",
+          "false"
+        ],
+        "required": false
+      },
+      "width": {
+        "name": "width",
+        "description": "Image width",
+        "type": "string",
+        "required": false,
+        "default": "100%"
+      },
+      "maxWidth": {
+        "name": "maxWidth",
+        "description": "Maximum image width",
+        "type": "string",
+        "required": false,
+        "default": "750px"
+      },
+      "zoom": {
+        "name": "zoom",
+        "description": "Enable zooming an image with the mouse wheel",
+        "type": [
+          "true",
+          "false"
+        ],
+        "required": false,
+        "default": false
+      },
+      "negativeZoom": {
+        "name": "negativeZoom",
+        "description": "Enable zooming out an image",
+        "type": [
+          "true",
+          "false"
+        ],
+        "required": false,
+        "default": false
+      },
+      "zoomBy": {
+        "name": "zoomBy",
+        "description": "Scale factor",
+        "type": "float",
+        "required": false,
+        "default": 1.1
+      },
+      "grid": {
+        "name": "grid",
+        "description": "Whether to show a grid",
+        "type": [
+          "true",
+          "false"
+        ],
+        "required": false,
+        "default": false
+      },
+      "gridSize": {
+        "name": "gridSize",
+        "description": "Specify size of the grid",
+        "type": "number",
+        "required": false,
+        "default": 30
+      },
+      "gridColor": {
+        "name": "gridColor",
+        "description": "Color of the grid in hex, opacity is 0.15",
+        "type": "string",
+        "required": false,
+        "default": "#EEEEF4"
+      },
+      "zoomControl": {
+        "name": "zoomControl",
+        "description": "Show zoom controls in toolbar",
+        "type": [
+          "true",
+          "false"
+        ],
+        "required": false,
+        "default": false
+      },
+      "brightnessControl": {
+        "name": "brightnessControl",
+        "description": "Show brightness control in toolbar",
+        "type": [
+          "true",
+          "false"
+        ],
+        "required": false,
+        "default": false
+      },
+      "contrastControl": {
+        "name": "contrastControl",
+        "description": "Show contrast control in toolbar",
+        "type": [
+          "true",
+          "false"
+        ],
+        "required": false,
+        "default": false
+      },
+      "rotateControl": {
+        "name": "rotateControl",
+        "description": "Show rotate control in toolbar",
+        "type": [
+          "true",
+          "false"
+        ],
+        "required": false,
+        "default": false
+      },
+      "crosshair": {
+        "name": "crosshair",
+        "description": "Show crosshair cursor",
+        "type": [
+          "true",
+          "false"
+        ],
+        "required": false,
+        "default": false
+      },
+      "horizontalAlignment": {
+        "name": "horizontalAlignment",
+        "description": "Where to align image horizontally. Can be one of \"left\", \"center\" or \"right\"",
+        "type": "string",
+        "required": false,
+        "default": "left"
+      },
+      "verticalAlignment": {
+        "name": "verticalAlignment",
+        "description": "Where to align image vertically. Can be one of \"top\", \"center\" or \"bottom\"",
+        "type": "string",
+        "required": false,
+        "default": "top"
+      },
+      "defaultZoom": {
+        "name": "defaultZoom",
+        "description": "Specify the initial zoom of the image within the viewport while preserving it’s ratio. Can be one of \"auto\", \"original\" or \"fit\"",
+        "type": "string",
+        "required": false,
+        "default": "fit"
+      },
+      "valuelist": {
+        "name": "valuelist",
+        "description": "References a variable that holds a list of image URLs",
+        "type": "string",
+        "required": false
+      },
+      "crossOrigin": {
+        "name": "crossOrigin",
+        "description": "Configures CORS cross domain behavior for this image, either \"none\", \"anonymous\", or \"use-credentials\", similar to [DOM `img` crossOrigin property](https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/crossOrigin).",
+        "type": "string",
+        "required": false,
+        "default": "none"
+      }
+    }
+  },
   "List": {
     "name": "List",
     "description": "The `List` tag is used to display a list of similar items like articles, search results, etc. Task data referred in `value` parameter should be an array of objects with `id`, `title`, and `body` fields.\nIt's much more lightweight than group of other tags like Text. And you can attach classification to provide additional data about this list.\nCan be used with `Ranker` tag to rank items or pick relevant items from a list.\nItems can be styled in `Style` tag by using `.htx-ranker-item` class.",
@@ -2848,6 +3024,7 @@
       }
     },
     "children": [
+      "SateliteImage",
       "Audio",
       "HyperText",
       "Image",

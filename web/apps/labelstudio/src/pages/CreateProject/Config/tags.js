@@ -25,6 +25,32 @@ const OBJECTS = {
       },
     },
   },
+  SateliteImage: {
+    type: 'SateliteImage',
+    settings: {
+      strokeWidth: {
+        title: 'Width of region borders',
+        type: Number,
+        param: ($obj, value) => $obj.$controls.forEach($control => $control.setAttribute('strokeWidth', value)),
+        value: $obj => $obj.$controls[0]?.getAttribute('strokeWidth') ?? 1,
+      },
+      zoom: {
+        title: 'Allow image zoom (ctrl+wheel)',
+        type: Boolean,
+        param: 'zoom',
+      },
+      zoomControl: {
+        title: 'Show controls to zoom in and out',
+        type: Boolean,
+        param: 'zoomControl',
+      },
+      rotateControl: {
+        title: 'Show controls to rotate image',
+        type: Boolean,
+        param: 'rotateControl',
+      },
+    },
+  },
   Text: {
     type: 'Text',
     settings: {

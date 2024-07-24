@@ -445,6 +445,7 @@ SUPPORTED_EXTENSIONS = set(
         '.mp4',
         '.webm',
         '.webp',
+        '.tif',
     ]
 )
 

@@ -19,6 +19,7 @@ const supportedExtensions = {
   audio: ['wav', 'mp3', 'flac', 'm4a', 'ogg'],
   video: ['mp4', 'webp', 'webm'],
   image: ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'],
+  sateliteImage: ['tif'],
   html: ['html', 'htm', 'xml'],
   timeSeries: ['csv', 'tsv'],
   common: ['csv', 'tsv', 'txt', 'json'],
@@ -335,11 +336,12 @@ export const ImportPage = ({
                 <dl>
                   <dt>Text</dt><dd>{supportedExtensions.text.join(', ')}</dd>
                   <dt>Audio</dt><dd>{supportedExtensions.audio.join(', ')}</dd>
-                  <dt>Video</dt><dd>mpeg4/H.264 webp, webm* {/* Keep in sync with supportedExtensions.video */}</dd>
                   <dt>Images</dt><dd>{supportedExtensions.image.join(', ')}</dd>
+                  <dt>Satelite Images</dt><dd>{supportedExtensions.sateliteImage.join(', ')}</dd>
                   <dt>HTML</dt><dd>{supportedExtensions.html.join(', ')}</dd>
                   <dt>Time Series</dt><dd>{supportedExtensions.timeSeries.join(', ')}</dd>
                   <dt>Common Formats</dt><dd>{supportedExtensions.common.join(', ')}</dd>
+                  <dt>Video</dt><dd>mpeg4/H.264 webp, webm* {/* Keep in sync with supportedExtensions.video */}</dd>
                 </dl>
                 <b>
                    * – Support depends on the browser<br/>

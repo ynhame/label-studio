@@ -34,6 +34,24 @@ export const recipes = [
 `,
   },
   {
+    title: "Georeferencing Segmentation",
+    type: "community",
+    group: "Computer Vision",
+    image: "polygon.png",
+    details: ``,
+    config: `<View>
+  <Header value="Select label and click on image to start"/>
+  <SateliteImage name="image" value="$sateliteimage"/>
+  <PolygonLabels name="label" toName="$sateliteimage"
+                 strokeWidth="3" pointSize="small"
+                 opacity="0.9">
+    <Label value="Airplane" background="red"/>
+    <Label value="Car" background="blue"/>
+  </PolygonLabels>
+</View>
+`,
+  },
+  {
     title: "Named entity recognition",
     type: "community",
     group: "NLP",
